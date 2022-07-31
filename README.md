@@ -3,7 +3,9 @@ This repository for the test task for writing an HTTP service that accepts reque
 
 Before you'll start you need to install libraries "libevent" for simple HTTP server and "stb" for working with images
 On Ubuntu you can do this with commands written below
+
 "sudo apt-get install libevent-dev"
+
 "sudo apt install libstb-dev"
 
 The service accepts HTTP connections. 
