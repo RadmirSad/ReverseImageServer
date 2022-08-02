@@ -32,7 +32,7 @@ void Server::processing_requests() {
         FILE* inp_file = fopen(filename.c_str(), "wb");
 
         // save the captured image
-        if(evbuffer_write_atmost(in_buf, fileno(inp_file), -1) == -1)
+        if(evbuffer_write(in_buf, fileno(inp_file)) == -1)
             std::cerr << "Zero bytes(" << std::endl;
         fclose(inp_file);
 
@@ -104,36 +104,12 @@ void Server::processing_requests() {
     evhttp_set_gencb(http.get(), action, nullptr);
 
     // the server is waiting some requests while it works
-    while(is_working)
+    while(is_working) {
         event_base_loop(base.get(), EVLOOP_NONBLOCK);
+        std::this_thread::sleep_for(std::chrono::microseconds(10));
+    }
 }
 
 void Server::turn_off() {
     is_working = false;
-}
-
-void TestImages() {
-    for(int i = 1; i <= 5; ++i) {
-        std::string res_name = "TestData/out" + std::to_string(i) + ".jpg",
-        ans_name = "TestData/answ" + std::to_string(i) + ".jpg";
-        int res_width = 0, res_height = 0, res_comp = 0,
-        answ_width = 0, answ_height = 0, answ_comp = 0;
-        std::unique_ptr<unsigned char, decltype(&stbi_image_free)> result(
-                stbi_load(res_name.c_str(),&res_width,
-                          &res_height, &res_comp, 0), &stbi_image_free);
-        std::unique_ptr<unsigned char, decltype(&stbi_image_free)> answer(
-                stbi_load(ans_name.c_str(),&answ_width,
-                          &answ_height, &answ_comp, 0), &stbi_image_free);
-        size_t count = res_width * res_height * res_comp, ans_count = answ_comp * answ_height * answ_width;
-        if(count != ans_count) {
-            std::cerr << "Incorrect result: image parameters aren't equal" << std::endl;
-            return;
-        }
-        for(size_t ind = 0; ind < count; ++ind)
-            if(result.get()[ind] != answer.get()[ind]) {
-                std::cerr << "Incorrect result: pixels aren't the same" << std::endl;
-                return;
-            }
-    }
-    std::cout << "Test ended successfully" << std::endl;
 }

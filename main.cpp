@@ -1,14 +1,10 @@
 #include "Server.h"
-#include <thread>
 
 void work(Server& server) {
     server.processing_requests();
 }
 
 int main() {
-    // To test images comment out the line below
-    TestImages();
-
     // Create a server and start its work on the other thread
     Server server;
     std::thread th(work, std::ref(server));

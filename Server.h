@@ -8,12 +8,8 @@
 #include <atomic>
 #include <future>
 #include <array>
-
-/*
- * The function for compare result images with correctly reversed images
- * Images were reversed on the cite: https://www.imgonline.com.ua/mirror-reflection.php
- */
-void TestImages();
+#include <thread>
+#include <chrono>
 
 /*
  * The class for handling HTTP requests with an image attached
